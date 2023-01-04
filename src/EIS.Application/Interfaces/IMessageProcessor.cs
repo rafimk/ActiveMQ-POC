@@ -1,7 +1,9 @@
-namespace EIS.Application.Interfaces
+using EIS.Domain.Entities;
+using System.Threading.Tasks;
+
+namespace EIS.Application.Interfaces;
+
+public interface IMessageProcessor
 {
-    public interface IMessageProcessor
-    {
-        Task Process(Payload payload, string eventType);
-    }
+    Task Process(Payload payload, string eventType);
 }

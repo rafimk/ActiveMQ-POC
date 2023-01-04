@@ -7,6 +7,14 @@ using System.Runtime.Serialization;
 using System.Collections.Specialized;
 using System.Net.Security;
 using System.ComponentModel.Design;
+using Microsoft.Extensions.DependencyInjection;
+using EIS.Application.Interfaces;
+using EIS.Infrastructure.Persistence;
+using EIS.Domain.Entities;
+using Microsoft.AspNetCore.Builder;
+using EIS.Infrastructure.Scheduler.Jobs;
+using EIS.Infrastructure.Scheduler;
+
 namespace EIS.Infrastructure.Configuration;
 
 public static class EisStartup
@@ -55,16 +63,16 @@ public static class EisStartup
             var scopedFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             var scope = scopedFactory?.CreateScope();
             var eventProcessor = (T)scope?.ServiceProvider?.GetRequiredService<IMessageProcessor>();
-            EventHandlerRegistry eventHandlerRegistry = app.ApplicationService.GetService<EventHandlerRegistry>();
+            EventHandlerRegistry eventHandlerRegistry = app.ApplicationServices.GetService<EventHandlerRegistry>();
             eventHandlerRegistry?.AddMessageProcessor(eventProcessor);
         }
         return AddEISProcessor(app);
     }
 
-    public static IApplicationBuilder AddEISProcessor(this IApplication app)
+    public static IApplicationBuilder AddEISProcessor(this IApplicationBuilder app)
     {
-        app.ApplicationService.GetRequiredService<IMessageQueueManager>();
-        app.ApplicationService.GetRequiredService<IDatabaseBootstrap>();
+        app.ApplicationServices.GetRequiredService<IMessageQueueManager>();
+        app.ApplicationServices.GetRequiredService<IDatabaseBootstrap>();
 
         return app;
     }

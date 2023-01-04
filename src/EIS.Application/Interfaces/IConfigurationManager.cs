@@ -1,14 +1,15 @@
-namespace EIS.Application.Interfaces
-{
-    public interface IConfigurationManager
-    {
-        string GetBrokeUrl();
-        ApplicationSettings GetAppSettings();
-        BrokerConfiguration GetBrokerConfiguration();
-        void Dispose();
+using EIS.Domain.Entities;
 
-        string GetSourceSystemName();
-        bool GetMessageSubcriptionStatus();
-        
-    }
+namespace EIS.Application.Interfaces;
+
+public interface IConfigurationManager
+{
+    string GetBrokeUrl();
+    ApplicationSettings GetAppSettings();
+    BrokerConfiguration GetBrokerConfiguration();
+    void Dispose();
+
+    string GetSourceSystemName();
+    bool GetMessageSubcriptionStatus();
+    
 }

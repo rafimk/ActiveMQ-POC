@@ -1,17 +1,24 @@
-namespace EIS.Application.Util
+using EIS.Application.Behaviour;
+using System;
+using System.IO;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace EIS.Application.Util;
+
+public class JsonSerializerUtil
 {
-    public class JsonSerializerUtil
+    public static string SeializeEvent(object message)
     {
-        public static string SeializeEvent(object message)
+        var serializerOptions = new JsonSerializerOptions
         {
-            var serializerOptions = new JsonSerializerOptions
-            {
-                Converters = { new DateTimeJsonBehavior() },
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            return JsonSerializerUtil.Seialize(message, serializerOptions);
-        }
+            Converters = { new DateTimeJsonBehaviour() },
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        return JsonSerializer.Serialize(message, serializerOptions);
     }
+
 
     public static TOutput DeserializeObject<TOutput>(string message)
     {
@@ -19,23 +26,23 @@ namespace EIS.Application.Util
         {
             var serializerOptions = new JsonSerializerOptions
             {
-                Converters = { new DateTimeJsonBehavior()  },
+                Converters = { new DateTimeJsonBehaviour() },
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            return JsonSerializer.Deserialize<TOutput>(message, serializerOptions)
+            return JsonSerializer.Deserialize<TOutput>(message, serializerOptions);
         }
         catch
         {
-            throw ;
+            throw;
         }
     }
 
-    public async static ValueTask<TOutput> DeserializeObjectAsync<TOutput>(string message CancellationToken token)
+    public static async Task<TOutput> DeserializeObjectAsync<TOutput>(string message, CancellationToken token)
     {
         var serializerOptions = new JsonSerializerOptions
         {
-            Converters = { new DateTimeJsonBehavior()  },
+            Converters = { new DateTimeJsonBehaviour() },
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 

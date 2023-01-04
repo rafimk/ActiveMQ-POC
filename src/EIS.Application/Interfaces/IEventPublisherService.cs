@@ -1,7 +1,8 @@
-namespace EIS.Application.Interfaces
+using System.Threading.Tasks;
+
+namespace EIS.Application.Interfaces;
+
+public interface IEventPublisherService
 {
-    public interface IEventPublisherService
-    {
-        Task publish(IMessageEISProducer messageObject);
-    }
+    Task publish(IMessageEISProducer messageObject);
 }

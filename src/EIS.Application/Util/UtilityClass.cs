@@ -1,37 +1,42 @@
 using System;
-using System.Diagnostics.Tracing;
-using System.Runtime.InteropServices.ComTypes;
 using System.Net.Sockets;
-using System.Security;
-using System.Security.Cryptography;
 using System.Net;
 using System.Net.NetworkInformation;
+using EIS.Application.Exceptions;
+using System.Threading.Tasks;
+using EIS.Domain.Entities;
+using EIS.Application.Interfaces;
+using Microsoft.Extensions.Logging;
+
 namespace EIS.Application.Util
 {
     public class UtilityClass
     {
-        public static GetLocalIpAddress()
+        public static string GetLocalIpAddress()
         {
-            if (!NetworkInterface.GetIsNetWorkAvailable())
+            if (!NetworkInterface.GetIsNetworkAvailable())
             {
                 return null;
             }
 
-            IPHostEntry = hostEntry = Dns.GetHostEntry(DSACng.GetHostName());
+            string Hostname = null;
+            Hostname = System.Environment.MachineName;
+
+            IPHostEntry hostEntry = Dns.GetHostEntry(Hostname); 
             foreach (var ip in hostEntry.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    return IPersistFile.ToString();
+                    return ip.ToString();
                 }
             }
 
             return null;
         }
 
-        public static async Task ConsumeEventAsync(EisEvent eisEvent, string queueName, EventHandlerRegistry, ILogger log)
+        public static async Task ConsumeEventAsync(EisEvent eisEvent, string queueName, EventHandler registry, ILogger log)
         {
-            IMessageProcessor messageProcessor = eventRegistry.GetMessageProcessor();
+            IMessageProcessor messageProcessor = registry.GetMessageProcessor();
 
             if (messageProcessor == null)
             {

@@ -1,16 +1,17 @@
-using System.Globalization;
 using System.Data;
-using System.Net;
-using System.Transactions;
 using System.Runtime.InteropServices;
-using System.Net.Cache;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
-using System.Security.Cryptography.X509Certificates;
 using System;
-namespace EIS.Infrastructure.Configuration
+using EIS.Application.Interfaces;
+using EIS.Domain.Entities;
+using Microsoft.Extensions.Logging;
+using Apache.NMS;
+using EIS.Application.Util;
+using EIS.Application.Constants;
 
-public class BrokerConnectionFactory : IBrokerConnectionFactory
+namespace EIS.Infrastructure.Configuration;
+
+public class BrokerConnectionFactory : IBrockerConnectionFactory
 {
     private bool isDisposed = false;
     private readonly ILogger<BrokerConnectionFactory> _log;
@@ -28,7 +29,7 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
     private readonly IEventInboxOutboxDbContext _eventInOutDbContext;
     private readonly EventHandlerRegistry _eventRegistry;
 
-    public BrokerConnectionFactory(ICconfigurationManager configurationManager, IEventInboxOutboxDbContext eventInOutDbContext,
+    public BrokerConnectionFactory(IConfigurationManager configurationManager, IEventInboxOutboxDbContext eventInOutDbContext,
     ILogger<BrokerConnectionFactory> log)
     {
         _log = log;
@@ -69,7 +70,7 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
             _log.LogInformation("Created Publisher Connection {con}", publisherConnection.ToString());
 
             var topic = _configManager.GetAppSettings().OutboundTopic;
-            var topicDestination = SessionUtil.GetTopic(publisherSession, topic);
+            var topicDescription = SessionUtil.GetTopic(publisherSession, topic);
 
             publisherConnection.Start();
 
@@ -78,14 +79,14 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
                 _log.LogInformation("Connection started");
             }
 
-            IMessageProducer messagePublisher = publisherSession.CreateProducer(TopicDescription);
+            IMessageProducer messagePublisher = publisherSession.CreateProducer(topicDescription);
             messagePublisher.DeliveryMode = MsgDeliveryMode.Persistent;
             messagePublisher.RequestTimeout = receiveTimeout;
-            _log.LogInformation("Created message producer for destination topic : {d}", TopicDestination);
+            _log.LogInformation("Created message producer for destination topic : {d}", topicDescription);
 
             messagePublisher.Send(txtMsg);
-            _log.LogInformation("Message send to destination topic : {d}", TopicDestination);
-            DestroyPublisherConnection(publisherConnection);
+            _log.LogInformation("Message send to destination topic : {d}", topicDescription);
+            DestroyConsumerConnection(publisherConnection);
         }
         catch (Apache.NMS.ActiveMQ.ConnectionClosedException e1)
         {
@@ -115,9 +116,9 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
             }
             throw;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            _log.LogCritical("Error occurred while creation producer : ", e.StackTrace)
+            _log.LogCritical("Error occurred while creation producer : ", ex.StackTrace);
             DestroyPublisherConnection(publisherConnection);
         }
     }
@@ -126,7 +127,7 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
     private ITextMessage GetTextMessageRequest(ISession publisherSession, string message)
     {
         ITextMessage request = publisherSession.CreateTextMessage(message);
-        request.NMCorrelationID = GuidAttribute.NewGuid().ToString();
+        request.NMSCorrelationID = Guid.NewGuid().ToString();
         return request;
     }
 
@@ -134,14 +135,14 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
     {
         try
         {
-            string jsonString = JsonSerializerUtil.SerializeEvent(eisEvent);
+            string jsonString = JsonSerializerUtil.SeializeEvent(eisEvent);
             _log.LogInformation("{s}", jsonString);
             PublishMessageToTopic(jsonString);
             _log.LogDebug($"SendToQueue exiting");
         }
-        catch (System.Exception)
+        catch (Exception ex)
         {
-            _log.LogCritical("{s}", e.StackTrace);
+            _log.LogCritical("{s}", ex.StackTrace);
             throw;
         }
     }
@@ -306,6 +307,11 @@ public class BrokerConnectionFactory : IBrokerConnectionFactory
         {
             _log.LogError("Error while disposing the connection", ex.StackTrace);
         }
+    }
+
+    public void Publishtopic(EisEvent eisEvent)
+    {
+        throw new NotImplementedException();
     }
     #endregion
 }

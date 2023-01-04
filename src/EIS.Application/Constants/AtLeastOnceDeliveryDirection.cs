@@ -1,8 +1,7 @@
-namespace EIS.Application.Constants
+namespace EIS.Application.Constants;
+
+public class AtLeastOnceDeliveryDirection
 {
-    public class AtLeastOnceDeliveryDirection
-    {
-        public const string IN = "IN";
-        public const string OUT = "OUT";
-    }
+    public const string IN = "IN";
+    public const string OUT = "OUT";
 }

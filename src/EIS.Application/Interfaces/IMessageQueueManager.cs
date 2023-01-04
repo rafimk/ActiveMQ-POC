@@ -1,10 +1,12 @@
-namespace EIS.Application.Interfaces
+using EIS.Domain.Entities;
+using System.Threading.Tasks;
+
+namespace EIS.Application.Interfaces;
+
+public interface IMessageQueueManager
 {
-    public interface IMessageQueueManager
-    {
-        Task ConsumerEvent(EisEvent eisEvent, string queueName);
-        Task InboxOutboxPollerTask();
-        Task TryPublish(EisEvent eisEvent);
-        Task ConsumerKeepAliveTask();
-    }
+    Task ConsumerEvent(EisEvent eisEvent, string queueName);
+    Task InboxOutboxPollerTask();
+    Task TryPublish(EisEvent eisEvent);
+    Task ConsumerKeepAliveTask();
 }

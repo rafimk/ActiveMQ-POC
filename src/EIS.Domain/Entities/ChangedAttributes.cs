@@ -1,8 +1,7 @@
-namespace EIS.Domain.Entities
+namespace EIS.Domain.Entities;
+
+public class ChangedAttributes
 {
-    public class ChangedAttributes
-    {
-        public string Key { get; set;}
-        public string Value { get; set;}
-    }
+    public string Key { get; set;}
+    public string Value { get; set;}
 }

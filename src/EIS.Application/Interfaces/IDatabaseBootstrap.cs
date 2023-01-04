@@ -1,7 +1,6 @@
-namespace EIS.Application.Interfaces
+namespace EIS.Application.Interfaces;
+
+public interface IDatabaseBootstrap
 {
-    public interface IDatabaseBootstrap
-    {
-        void Setup();
-    }
+    void Setup();
 }

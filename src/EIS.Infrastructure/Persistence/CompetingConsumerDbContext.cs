@@ -1,6 +1,6 @@
-using System.Security.Cryptography.X509Certificates;
 using System;
-using System.Data;
+using System.Threading.Tasks;
+
 namespace EIS.Infrastructure.Persistence;
 
 public class CompetingConsumerDbContext : ICompetingConsumerDbContext
@@ -36,11 +36,11 @@ public class CompetingConsumerDbContext : ICompetingConsumerDbContext
                 "WHERE NOT EXISTS (SELECT 1 FROM EIS_COMPETING_CONSUMER_GROUP WITH (nolock) WHERE GROUP_KEY = @eisGroupKey))";
 
                 _log.LogDebug("Executing query: {sql} with variables [{id}, {eisGroupKey}, {HostIp]}]", sql, id, eisGroupKey, HostIp);
-                return await Connection.ExecuteAsync(sql, new { id, eisGroupKey, HostIp});
+                return await connection.ExecuteAsync(sql, new { id, eisGroupKey, HostIp});
             }
             catch (Exception e)
             {
-                _log.LogError("Database Error: {e}", e.Message)
+                _log.LogError("Database Error: {e}", e.Message);
                 throw;
             }
         }

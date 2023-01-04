@@ -4,6 +4,12 @@ using System.Reflection.Metadata;
 using System;
 using System.Reflection.Emit;
 using System.Reflection;
+using EIS.Application.Interfaces;
+using Microsoft.Extensions.Logging;
+using EIS.Domain.Entities;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+
 namespace EIS.Infrastructure.Configuration;
 
 public class ConfigurationManager : IConfigurationManager
@@ -112,6 +118,16 @@ public class ConfigurationManager : IConfigurationManager
         {
             isDisposed = true;
         }
+    }
+
+    public string GetBrokeUrl()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool GetMessageSubcriptionStatus()
+    {
+        throw new NotImplementedException();
     }
     #endregion
 

@@ -1,3 +1,5 @@
+using EIS.Application.Interfaces;
+
 namespace EIS.Infrastructure.Configuration;
 
 public class EventHandlerRegistry

@@ -1,10 +1,11 @@
-namespace EIS.Application.Interfaces
-{
-    public class IMessageEISProducer
-    {
-        Payload GetPayLoad();
-        string GetEventType();
-        string GetTraceId();
+using EIS.Domain.Entities;
 
-    }
+namespace EIS.Application.Interfaces;
+
+public interface IMessageEISProducer
+{
+    Payload GetPayLoad();
+    string GetEventType();
+    string GetTraceId();
+
 }
